@@ -75,5 +75,8 @@ namespace UIGianty
 
 		[Description("DialogueBox")]
 		DIALOGUE_BOX,
+
+		[Description("Home")]
+		SCREEN_HOME,
 	}
 }

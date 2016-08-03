@@ -138,6 +138,7 @@ namespace UIGianty
 
 			UIManScreen screen = null;
 			if (!screenDict.TryGetValue (content, out screen)) {
+				Debug.LogError ("Load " + config.screenPrefabFolder + content.ToName ());
 				ResourceFactory.LoadAsync<GameObject> (config.screenPrefabFolder + content.ToName (), PreprocessUI, content, seal, args);
 				return;
 			}
@@ -500,6 +501,8 @@ namespace UIGianty
 		/// <param name="args">Arguments.</param>
 		void PreprocessUI (GameObject prefab, object[] args)
 		{
+			if (prefab == null)
+				Debug.LogError ("Null..");
 			UIContentType content = (UIContentType)args [0];
 			if (prefab == null) {
 				Logger.LogFormatWarning ("UI Error: cannot find {0}, make sure you have put UI prefab in Resources folder!", content.ToString ());
