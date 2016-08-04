@@ -2,7 +2,7 @@
 using UIGianty;
 using UIGianty.MVVM;
 
-public partial class UIHomeViewModel : UIManScreen {
+public partial class UISettingViewModel : UIManScreen {
 
 #region Fields
 
@@ -32,8 +32,9 @@ public partial class UIHomeViewModel : UIManScreen {
 #endregion
 
 #region Custom implementation
-
-	// Your custom code here
+	public void OnBack(){
+		UIMan.Instance.BackScreen ();
+	}
 #endregion
 
 #region Override animations

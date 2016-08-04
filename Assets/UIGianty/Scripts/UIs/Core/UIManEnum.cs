@@ -78,5 +78,11 @@ namespace UIGianty
 
 		[Description("Home")]
 		SCREEN_HOME,
+
+		[Description("Setting")]
+		SCREEN_SETTING,
+
+		[Description("Help")]
+		SCREEN_HELP,
 	}
 }
