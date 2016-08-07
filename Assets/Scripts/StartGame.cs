@@ -6,7 +6,7 @@ public class StartGame : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		UIMan.Instance.ShowScreen (UIContentType.SCREEN_HOME);
+		UIMan.Instance.ShowScreen (UIContentType.SCREEN_PLAY_GAME);
 	}
 	
 	// Update is called once per frame

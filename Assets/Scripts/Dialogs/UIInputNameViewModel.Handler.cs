@@ -1,25 +1,19 @@
 ﻿using UnityEngine;
 using UIGianty;
 using UIGianty.MVVM;
+using UnityEngine.UI;
 
-public partial class UIHomeViewModel : UIManScreen {
+public partial class UIInputNameViewModel : UIManDialog {
 
 #region Fields
-
-	// Your fields here
+	public InputField _textName;
+	public Dropdown _dropdownPlayer;
 #endregion
 
 #region Built-in Events
-	public delegate void LogAA(string s);
-	public LogAA logger;
 	public override void OnShow (params object[] args)
 	{
-		logger ("SS");
-		logger += sss;
 		base.OnShow (args);
-	}
-
-	public void sss(string s){
 	}
 
 	public override void OnShowComplete ()
@@ -39,18 +33,16 @@ public partial class UIHomeViewModel : UIManScreen {
 #endregion
 
 #region Custom implementation
-	public void OnClickHelp(){
-		UIMan.Instance.ShowScreen (UIContentType.SCREEN_HELP);
-	}
+	public void OnClickOk(){
+		string name = _textName.text;
+		if (string.IsNullOrEmpty (name)) {
+			UIMan.Instance.ShowMessageDialog (null, "Input Name");
+			return;
+		}
 
-	public void OnClickPlay(){
-		UIMan.Instance.ShowScreen (UIContentType.SCREEN_PLAY_GAME);
+		int player = _dropdownPlayer.value;
+		this.Callback (0, player, name);
 	}
-
-	public void OnClickSetting(){
-		UIMan.Instance.ShowScreen (UIContentType.SCREEN_SETTING);
-	}
-	// Your custom code here
 #endregion
 
 #region Override animations

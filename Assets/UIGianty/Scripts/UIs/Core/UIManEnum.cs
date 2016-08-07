@@ -84,5 +84,11 @@ namespace UIGianty
 
 		[Description("Help")]
 		SCREEN_HELP,
+
+		[Description("PlayGame")]
+		SCREEN_PLAY_GAME,
+
+		[Description("InputName")]
+		DIALOG_INPUTNAME,
 	}
 }
