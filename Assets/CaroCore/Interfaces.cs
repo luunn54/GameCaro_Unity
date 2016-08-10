@@ -49,7 +49,7 @@ namespace CaroGame.Models
 
 		// event
 		// did init board
-		event InitHanlder Ininted;
+		event InitHanlder Inited;
 		// turn changed
 		event TurnChangeHanlder TurnChanged;
 		// did lay by player

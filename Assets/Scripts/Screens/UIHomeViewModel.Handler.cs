@@ -10,12 +10,9 @@ public partial class UIHomeViewModel : UIManScreen {
 #endregion
 
 #region Built-in Events
-	public delegate void LogAA(string s);
-	public LogAA logger;
+
 	public override void OnShow (params object[] args)
 	{
-		logger ("SS");
-		logger += sss;
 		base.OnShow (args);
 	}
 

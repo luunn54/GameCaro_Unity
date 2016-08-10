@@ -36,7 +36,8 @@ public partial class UIInputNameViewModel : UIManDialog {
 	public void OnClickOk(){
 		string name = _textName.text;
 		if (string.IsNullOrEmpty (name)) {
-			UIMan.Instance.ShowMessageDialog (null, "Input Name");
+			UIMan.Instance.ShowMessageDialog (string.Empty, "Input Name", delegate {
+			});
 			return;
 		}
 

@@ -40,6 +40,8 @@ public partial class UIPlayGameViewModel : UIManScreen {
 #region Custom implementation
 
 	private void ShowInputName(){
+		ClearBoard ();
+
 		Action<object[]> onDoneInput = (object[] outputs)=>{
 			int index = (int)outputs[0];
 			string name = outputs[1] as string;
@@ -49,12 +51,14 @@ public partial class UIPlayGameViewModel : UIManScreen {
 		UIMan.Instance.ShowDialog (UIContentType.DIALOG_INPUTNAME, new UICallback(onDoneInput));
 	}
 
-	private IEnumerator AddCell(Turn turn){
-		Debug.LogError(string.Format("{0}:{1} {2}", turn.CellValue, turn.Cell.X, turn.Cell.Y));
-		var cell = new UnityEngine.GameObject();
-		var img = cell.AddComponent<Image> ();
-		var sprite = Resources.Load<Sprite> ("Imgs/cell_x");
-		yield return null;
+	private void ClearBoard(){
+		foreach (Transform child in _boardObject.transform) {
+			GameObject.Destroy(child.gameObject);
+		}
+	}
+
+	public void OnBack(){
+		UIMan.Instance.BackScreen ();
 	}
 
 #endregion
@@ -64,23 +68,25 @@ public partial class UIPlayGameViewModel : UIManScreen {
 	void BoardDataFinished (IBoardData boardData)
 	{
 		if (boardData.IsFinished) {
-//			UIMan.Instance.ShowMessageDialog (string.Empty, "Finish");
-			Debug.LogError ("Finished..");
+			UIMan.Instance.ShowMessageDialog (string.Empty, _players[boardData.PlayerWin].Name + " Win!");
 		}
+	}
+
+	void BoardTurnChanged (IBoardData boardData, Turn? lastTurn)
+	{
+		var playerType = boardData.NextPlayer();
+		StartCoroutine(DelayAndPlay(playerType, lastTurn));
 	}
 
 	void BoardNextedTurn (IBoardData boardData, Turn turn)
 	{
-		Debug.LogError ("Next..");
-
-		var playerType = boardData.NextPlayer();
-//		PlayerTurn (playerType, turn);
-		StartCoroutine(DelayAndPlay(playerType, turn));
+		UpdateBoard (turn);
 	}
 
 	void BoardBackedTurn (IBoardData boardData, Turn turn)
 	{
 		Debug.LogError ("Back..");
+		UpdateBoard (turn);
 	}
 
 	private IEnumerator DelayAndPlay(CellValue playerType, Turn? lastTurn){
@@ -107,20 +113,45 @@ public partial class UIPlayGameViewModel : UIManScreen {
 		PlayerSecondName = _players [CellValue.SecondPlayer].Name;
 
 		PlayerTurn (CellValue.FirstPlayer, null);
-
-//		var cell = new UnityEngine.GameObject();
-//		var img = cell.AddComponent<Image> ();
-//		var x2 = cell.transform as RectTransform;
-//
-//		cell.transform.SetParent (_boardObjec
-//		//x2.position = new Vector3 (34 * 3, 34 * 5);
-//
-//		x2.localPosition = new Vector3 (34 * 3, 34 * 5);
-//		x2.sizeDelta = new Vector2 (34 * 2, 34 * 2);
-//		Debug.LogError (x2.anchoredPosition);
 	}
 #endregion
 
+#region Board Update UI
+
+	private void UpdateBoard(Turn turn){
+		string imageName = null;
+		switch (turn.CellValue) {
+			case CellValue.FirstPlayer:
+				imageName = "cell_x";
+				break;
+			case CellValue.SecondPlayer:
+				imageName = "cell_o";
+				break;
+			default:
+				imageName = null;
+				break;
+		}
+
+		if (imageName == null) {
+			// remove game object
+		} else {
+			// add new game object
+			var cell = new UnityEngine.GameObject ();
+			var img = cell.AddComponent<Image> ();
+
+			var pathImg = "Imgs/" + imageName;
+			var sprite = Resources.Load<Sprite> (pathImg);
+			img.sprite = sprite;
+
+			cell.transform.SetParent (_boardObject.transform, false);
+			RectTransform recttransform = cell.transform as RectTransform;
+			recttransform.pivot = Vector2.zero;
+
+			recttransform.sizeDelta = new Vector2 (34, 34);
+			recttransform.localPosition = new Vector3 (34 * turn.Cell.X, 34 * turn.Cell.Y, 0);
+		}
+	}
+#endregion
 
 #region Override animations
 	/* Uncommend this for override show/hide animation of Screen/Dialog use tweening code

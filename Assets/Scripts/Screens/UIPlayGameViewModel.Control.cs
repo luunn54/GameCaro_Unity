@@ -26,20 +26,30 @@ public partial class UIPlayGameViewModel {
 		_boardData = board;
 		_boardController = board;
 
-		_boardData.Ininted += BoardInited;
-		_boardData.Finished += BoardDataFinished;
-		_boardData.BackedTurn += BoardBackedTurn;
+		_boardData.Inited += BoardInited;
+		_boardData.TurnChanged += BoardTurnChanged;
 		_boardData.NextedTurn += BoardNextedTurn;
+		_boardData.BackedTurn += BoardBackedTurn;
+		_boardData.Finished += BoardDataFinished;
 
-		var firstPlayer = new StartGame.RandomPlayer ();
-		var secondPlayer = new StartGame.RandomPlayer ();
+		IPlayer firstPlayer = new RandomPlayer ();
+		firstPlayer.Init (name);
+
+		IPlayer secondPlayer = new RandomPlayer ();
+		secondPlayer.Init ("Random player");
+
+		if (index != 0) {
+			IPlayer temp = firstPlayer;
+			firstPlayer = secondPlayer;
+			secondPlayer = temp;
+		}
 
 		_players = new Dictionary<CellValue, IPlayer>() { 
 			{CellValue.FirstPlayer, firstPlayer},
 			{CellValue.SecondPlayer, secondPlayer }
             };
 
-		_boardController.Init (30, 30);
+		_boardController.Init (20, 20);
 	}
 
 #endregion

@@ -23,7 +23,21 @@ namespace CaroGame.Models
 			_turns = new List<Turn> ();
 			_isFinished = false;
 
-			Ininted (this);
+			Inited (this);
+		}
+
+		void IBoardControl.Start(){
+			if (WidthSize == 0 || HeightSize == 0) {
+				// board not init yet
+				return;
+			}
+
+			var countTurn = _turns.Count;
+			Turn? lastTurn = null;
+			if(countTurn > 0)
+				lastTurn = _turns [countTurn - 1];
+			
+			TurnChanged(this, lastTurn);
 		}
 
 		bool IBoardControl.NextTurn(CellValue player, Cell cell) {
@@ -49,6 +63,10 @@ namespace CaroGame.Models
 			NextedTurn (this, turn);
 
             CheckFinish();
+			if (!IsFinished) {
+				TurnChanged (this, turn);
+			}
+
 			return true;
 		}
 

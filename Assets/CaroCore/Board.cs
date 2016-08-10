@@ -28,9 +28,9 @@ namespace CaroGame.Models
         public CellValue PlayerWin { get; protected set; }
 
 		// event
-		public event InitHanlder Ininted;
+		public event InitHanlder Inited;
 
-		public event NextTurnHanlder NextedTurn;
+		public event TurnChangeHanlder TurnChanged;
 
 		public event NextTurnHanlder NextedTurn;
 		public event BackTurnHanlder BackedTurn;
