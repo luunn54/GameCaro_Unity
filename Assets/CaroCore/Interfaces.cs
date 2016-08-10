@@ -9,64 +9,61 @@ namespace CaroGame.Models
 		SecondPlayer = 2,
 	}
 
-    public interface IGameController
-    {
-        CellValue CellAt(sbyte col, sbyte row);
-        ReadOnlyCollection<Turn> GetTurns();
-        sbyte NumberWinRequest();
-
-		void Start();
-		void Stop();
-    }
-
 	public interface IPlayer
 	{
 		// user info
-		string Name{ get;}
+		void Init(string name);
 
+		string Name{ get;}
 		// Game flow
-		void BeginGame(IGameController gameController, sbyte widthBoard, sbyte heightBoard);
-		Cell NextTurn(Cell? lastCell);
+		void BeginGame(IBoardData boardData, CellValue playerType);
+		Cell NextTurn(Turn? lastTurn);
 		void EndGame(bool isWin);
 	}
 
 	public interface IBoardControl
 	{
-		void init (String player1, String player2, sbyte width, sbyte height);
-		bool NextTurn (Cell cell);
+		void Init (sbyte width, sbyte height);
+		void Start ();
+		bool NextTurn (CellValue player, Cell cell);
 		bool BackTurn ();
+
 		void ForceFinish (CellValue playerLose);
 	}
 
-	// define Delegate
-	public delegate void InitHanlder(IBoardViewer boardViewer);
-	public delegate void NextTurnHanlder(IBoardViewer boardViewer, Turn turn);
-	public delegate void BackTurnHanlder(IBoardViewer boardViewer, Turn turn);
-	public delegate void FinishHanlder(IBoardViewer boardViewer);
-
-	public interface IBoardViewer
+	public interface IBoardData
 	{
 		// get board info
+		CellValue NextPlayer ();
 		ReadOnlyCollection<Turn> GetTurns ();
 		CellValue CellAt (sbyte col, sbyte row);
+
 		// size of board
 		sbyte WidthSize{ get;}
 		sbyte HeightSize{ get;}
 
 		// did finish
-		bool Finish { get;}
-		CellValue NextPlayer ();
+		bool IsFinished { get;}
 		Cell[] WinCell { get; }
 		CellValue PlayerWin { get; }
 
-		// info user playing
-		String FirstUser { get;}
-		String SecondUser { get;}
-
 		// event
+		// did init board
 		event InitHanlder Ininted;
+		// turn changed
+		event TurnChangeHanlder TurnChanged;
+		// did lay by player
 		event NextTurnHanlder NextedTurn;
+		// did rollback board
 		event BackTurnHanlder BackedTurn;
+		// finish game changed
 		event FinishHanlder Finished;
 	}
+
+	// define Delegate
+	public delegate void InitHanlder(IBoardData boardData);
+	public delegate void TurnChangeHanlder(IBoardData boardData, Turn? lastTurn);
+	public delegate void NextTurnHanlder(IBoardData boardData, Turn turn);
+	public delegate void BackTurnHanlder(IBoardData boardData, Turn turn);
+	public delegate void FinishHanlder(IBoardData boardData);
 }

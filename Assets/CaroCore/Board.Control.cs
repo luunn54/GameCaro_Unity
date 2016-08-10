@@ -6,11 +6,8 @@ namespace CaroGame.Models
 {
 	public partial class Board : IBoardControl
 	{
-		public void init(String player1, String player2, sbyte width, sbyte height)
+		void IBoardControl.Init(sbyte width, sbyte height)
 		{
-            FirstUser = player1;
-            SecondUser = player2;
-
 			// set width, height
 			this.WidthSize = width;
 			this.HeightSize = height;
@@ -24,18 +21,24 @@ namespace CaroGame.Models
 					CellMatrix [x, y] = CellValue.None;
 
 			_turns = new List<Turn> ();
-			_finish = false;
+			_isFinished = false;
 
 			Ininted (this);
 		}
 
-		public bool NextTurn(Cell cell) {
-			if (cell.X < 0 || cell.Y < 0 || cell.X >= WidthSize || cell.Y >= HeightSize || CellMatrix[cell.X, cell.Y] != CellValue.None || Finish) {
+		bool IBoardControl.NextTurn(CellValue player, Cell cell) {
+			if (IsFinished)
+				return false;
+
+			CellValue nextPlayer = NextPlayer();
+			if (player != nextPlayer)
+				return false;
+
+			if (cell.X < 0 || cell.Y < 0 || cell.X >= WidthSize || cell.Y >= HeightSize || CellMatrix[cell.X, cell.Y] != CellValue.None) {
                 Console.WriteLine(cell.X + "," + cell.Y + " : " + CellMatrix[cell.X, cell.Y].ToString());
 				return false;
 			}
 
-            CellValue player = NextPlayer();
 			Turn turn = new Turn () {
 				Cell = cell,
 				CellValue = player
@@ -49,7 +52,7 @@ namespace CaroGame.Models
 			return true;
 		}
 
-        public bool BackTurn()
+		bool IBoardControl.BackTurn()
         {
             if (_turns.Count <= 0)
                 return false;
@@ -223,7 +226,7 @@ namespace CaroGame.Models
 
         private void CheckFinish()
         {
-            if (Finish)
+			if (IsFinished)
             {
                 return;
             }
@@ -232,7 +235,6 @@ namespace CaroGame.Models
             // bla bla...
             if(_turns.Count == 0)
             {
-                Finish = false;
                 return;
             }
             
@@ -242,11 +244,11 @@ namespace CaroGame.Models
 			if (didFinish)
             {
                 PlayerWin = CellMatrix[lastTurn.Cell.X, lastTurn.Cell.Y];
-				Finish = didFinish;
+				IsFinished = didFinish;
             }
         }
 
-        public void ForceFinish(CellValue playerLose)
+		void IBoardControl.ForceFinish (CellValue playerLose)
         {
             WinCell = null;
             foreach (CellValue playerTurn in PlayerTurns)
@@ -258,19 +260,7 @@ namespace CaroGame.Models
                 }
             }
 
-			Finish = true;
+			IsFinished = true;
         }
-
-		public bool Finish { 
-			get{
-				return _finish;
-			}
-			protected set{
-				if (_finish != value) {
-					_finish = value;
-					Finished (this);
-				}
-			}
-		}
 	}
 }
